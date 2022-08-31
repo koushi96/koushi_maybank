@@ -1,96 +1,108 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import ProductListing from "./ProductListing";
 import { QuantityPicker } from 'react-qty-picker';
-const product_card = [
-    {
-        id:1,
-        product_name:"Alpha Arbutin",
-        description: "Pigmention and uneven skintone",
-        price: 67,
-        currency: "MYR",
-        thumb: "./images/1.jpg",
-        stock: 22
-    },
-    {
-        id:2,
-        product_name:"Niacinamide",
-        description: "Pigmention and uneven skintone",
-        price: 87,
-        currency: "MYR",
-        thumb: "./images/2.jpg",
-        stock: 10
-    },
-    {
-        id:3,
-        product_name:"Retinol",
-        description: "Pigmention and uneven skintone",
-        price: 99,
-        currency: "MYR",
-        thumb: "./images/3.jpg",
-        stock: 31
-    },
-    {
-        id:4,
-        product_name:"AHA",
-        description: "Pigmention and uneven skintone",
-        price: 82,
-        currency: "MYR",
-        thumb: "./images/4.jpg",
-        stock: 18
-    },
-    {
-        id:5,
-        product_name:"Squalane",
-        description: "Pigmention and uneven skintone",
-        price: 55,
-        currency: "MYR",
-        thumb: "./images/5.jpg",
-        stock: 12
-    },
-    {
-        id:6,
-        product_name:"Glycol",
-        description: "Pigmention and uneven skintone",
-        price: 99,
-        currency: "MYR",
-        thumb: "./images/6.jpg",
-        stock: 25
-    }
+import Axios from "axios";
+// const productCard = [
+//     {
+//         id:1,
+//         product_name:"Alpha Arbutin",
+//         description: "Pigmention and uneven skintone",
+//         price: 67,
+//         currency: "MYR",
+//         thumb: "./images/1.jpg",
+//         stock: 22
+//     },
+//     {
+//         id:2,
+//         product_name:"Niacinamide",
+//         description: "Pigmention and uneven skintone",
+//         price: 87,
+//         currency: "MYR",
+//         thumb: "./images/2.jpg",
+//         stock: 10
+//     },
+//     {
+//         id:3,
+//         product_name:"Retinol",
+//         description: "Pigmention and uneven skintone",
+//         price: 99,
+//         currency: "MYR",
+//         thumb: "./images/3.jpg",
+//         stock: 31
+//     },
+//     {
+//         id:4,
+//         product_name:"AHA",
+//         description: "Pigmention and uneven skintone",
+//         price: 82,
+//         currency: "MYR",
+//         thumb: "./images/4.jpg",
+//         stock: 18
+//     },
+//     {
+//         id:5,
+//         product_name:"Squalane",
+//         description: "Pigmention and uneven skintone",
+//         price: 55,
+//         currency: "MYR",
+//         thumb: "./images/5.jpg",
+//         stock: 12
+//     },
+//     {
+//         id:6,
+//         product_name:"Glycol",
+//         description: "Pigmention and uneven skintone",
+//         price: 99,
+//         currency: "MYR",
+//         thumb: "./images/6.jpg",
+//         stock: 25
+//     }
 
-]
+// ]
 
 const Content = () => {
-    const [goToProduct, setGotoProduct] = React.useState(false);
+    
     var productList = [];
     var productList2 = [];
-    const [prodDetail, setProdDetail] = React.useState([]);
-    const [productStock, setProductStock] = React.useState();
-    const [items, setItems] = React.useState(product_card);
+    const [prodDetail, setProdDetail] = useState([]);
+    const [productStock, setProductStock] = useState();
+    const [goToProduct, setGotoProduct] = useState(false);
+    const [productCard, setProductCard] = useState([]);
+
+    useEffect(()=>{
+        Axios.get("http://localhost:3001/api/get").then((response)=>{
+            console.log(response)
+            setProductCard(response.data.rows)
+        })
+    });
 
     function handleChange(newValue) {
         setProductStock(newValue)
-        console.log(productStock)
-        console.log(items)
     }
 
-    const handleClickNewStock = function (e, stock : number, id : number){
-        console.log("stock : ",stock)
-        console.log("id", id)
-        console.log("test : ", product_card[id-1].product_name)
-        if (stock !== 0){
-            product_card[id-1].stock = stock
-            console.log("edited : ", product_card[id-1].stock)
+    const handleClickNewStock = function (e, productStock : number, productId : number){
+        
+        if (productStock !== 0){
+            Axios.post("http://localhost:3001/api/update", {
+                stock : productStock, 
+                id : productId
+            }).then(()=>{
+                alert('Update is successful!')
+            })
         } else {
-            setItems((items) => items.filter((_, i) => i !== id));
-            console.log("delete")
+            Axios.post("http://localhost:3001/api/delete", {
+                id : productId
+            }).then(()=>{
+                alert('Successfully deleted!')
+            })
         }
         
     }
     
     const handleClick = function (e, itemId : number){
 
-        Object.keys(product_card).forEach(function(itemId) {
-            productList.push(<option value={itemId}>{product_card[itemId]}</option>);
+        Object.keys(productCard).forEach(function(itemId) {
+            productList.push(<option value={itemId}>{productCard[itemId]}</option>);
         });
 
         productList.forEach((el)=>{
@@ -117,7 +129,7 @@ const Content = () => {
         );
     }
 
-    const listItems = product_card.map((item) => 
+    const listItems = productCard.map((item) => 
         <div className="card" key={item.id} >
             <div className="card_img" onClick = {(e : any) =>
                 [handleClick(e, item.id),
