@@ -3,28 +3,6 @@ import React from "react";
 
 
 const ProductListing = (prodDetail : any) => {
-    // let value = prodDetail.prodDetail[6];
-    // let id = prodDetail.prodDetail[0];
-    // const [productStock, setProductStock] = React.useState(value)
-    // const [list, setList] = React.useState(product_card);
-
-    
-    // function handleChange(newValue) {
-    //     setProductStock(newValue)
-    // }
-
-    // const handleClick = function (e, stock : number, id : number){
-    //     console.log("stock : ",stock)
-    //     console.log("id", id)
-    //     // console.log("test : ", product_card[id-1].product_name)
-    //     // if (stock !== 0){
-    //     //     product_card[id-1].stock = stock
-    //     //     console.log("edited : ", product_card[id-1].stock)
-    //     // } else {
-    //     //     console.log("delete")
-    //     // }
-        
-    // }
 
 return(
         <div className="product_content">
